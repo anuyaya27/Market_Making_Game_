@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Market Making Trainer</title>
+    <link rel="stylesheet" href="./css/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Market Making Trainer</h1>
+    </header>
+
+    <main class="site-main">
+      <section id="scenario-list-view" class="view" aria-labelledby="scenario-list-title">
+        <div class="view-header">
+          <h2 id="scenario-list-title">Choose a scenario</h2>
+        </div>
+        <div id="scenario-list" class="scenario-list"></div>
+      </section>
+
+      <section id="game-view" class="view" aria-labelledby="game-title" hidden>
+        <button id="back-to-list" class="back-button" type="button">Back</button>
+        <div class="scenario-detail">
+          <p id="game-unit" class="scenario-unit"></p>
+          <h2 id="game-title"></h2>
+          <p id="game-prompt" class="scenario-prompt"></p>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>

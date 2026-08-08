@@ -1,0 +1,113 @@
+/*
+  Global styles for the Market Making Trainer static shell.
+  Future UI styling will extend this file.
+*/
+
+:root {
+  color-scheme: light;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f7f7f4;
+  color: #1d2521;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background: #f7f7f4;
+}
+
+.site-header {
+  border-bottom: 1px solid #d9ded8;
+  background: #ffffff;
+  padding: 24px;
+}
+
+.site-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.site-main {
+  min-height: calc(100vh - 86px);
+  padding: 24px;
+}
+
+.view {
+  width: min(100%, 760px);
+  margin: 0 auto;
+}
+
+.view-header {
+  margin-bottom: 20px;
+}
+
+.view-header h2,
+.scenario-detail h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.scenario-list {
+  display: grid;
+  gap: 12px;
+}
+
+.scenario-button,
+.back-button {
+  border: 1px solid #c7d0c8;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1d2521;
+  cursor: pointer;
+  font: inherit;
+}
+
+.scenario-button {
+  width: 100%;
+  padding: 18px 20px;
+  text-align: left;
+  font-weight: 700;
+}
+
+.scenario-button:hover,
+.scenario-button:focus-visible,
+.back-button:hover,
+.back-button:focus-visible {
+  border-color: #2d6a4f;
+  outline: 2px solid #2d6a4f;
+  outline-offset: 2px;
+}
+
+.back-button {
+  margin-bottom: 24px;
+  padding: 10px 14px;
+}
+
+.scenario-detail {
+  border-top: 1px solid #d9ded8;
+  padding-top: 24px;
+}
+
+.scenario-unit {
+  margin: 0 0 8px;
+  color: #65716a;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.scenario-prompt {
+  margin: 0;
+  color: #4d5a52;
+  font-size: 1.125rem;
+  line-height: 1.6;
+}
+
+.scenario-detail h2 {
+  margin-bottom: 12px;
+}

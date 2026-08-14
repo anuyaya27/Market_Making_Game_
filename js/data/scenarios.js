@@ -126,5 +126,86 @@ export const scenarios = [
     // Defined SI constant, exact. 299,792,458 m/s.
     trueValue: 299792.458,
     source: "SI defined constant"
+  },
+  {
+    id: "trees-on-earth",
+    title: "Trees on Earth",
+    prompt: "Roughly how many trees are estimated to be on Earth?",
+    unit: "trees",
+    // Estimate, not exact: Crowther et al., Nature 2015 (about 3.04 trillion).
+    trueValue: 3040000000000,
+    source: "Crowther et al., Nature 2015"
+  },
+  {
+    id: "living-languages",
+    title: "Living Languages",
+    prompt: "About how many living languages are spoken in the world today?",
+    unit: "languages",
+    // Estimate, varies by classification: Ethnologue (about 7,170).
+    trueValue: 7170,
+    source: "Ethnologue, 2024 edition"
+  },
+  {
+    id: "cells-in-human-body",
+    title: "Cells in the Human Body",
+    prompt: "Roughly how many cells are in the adult human body?",
+    unit: "cells",
+    // Estimate, not exact: Bianchi et al. 2013 (about 37.2 trillion).
+    trueValue: 37000000000000,
+    source: "Bianchi et al., Annals of Human Biology 2013"
+  },
+  {
+    id: "earth-sun-distance",
+    title: "Earth to Sun Distance",
+    prompt: "What is the average distance from the Earth to the Sun, one astronomical unit?",
+    unit: "kilometers",
+    // 1 AU. Confirm against the NASA Sun fact sheet.
+    trueValue: 149600000,
+    source: "NASA, one astronomical unit"
+  },
+  {
+    id: "periodic-table-elements",
+    title: "Periodic Table Elements",
+    prompt: "How many elements are on the periodic table?",
+    unit: "elements",
+    // Confirm against IUPAC. 118 confirmed elements.
+    trueValue: 118,
+    source: "IUPAC"
+  },
+  {
+    id: "bones-adult-body",
+    title: "Bones in the Adult Body",
+    prompt: "How many bones are in the adult human body?",
+    unit: "bones",
+    // Standard anatomical count.
+    trueValue: 206,
+    source: "Standard anatomy reference"
+  },
+  {
+    id: "piano-keys",
+    title: "Piano Keys",
+    prompt: "How many keys are on a standard full-size piano?",
+    unit: "keys",
+    // Standard 88-key piano.
+    trueValue: 88,
+    source: "Standard piano specification"
+  },
+  {
+    id: "marathon-distance",
+    title: "Marathon Distance",
+    prompt: "What is the official distance of a marathon?",
+    unit: "kilometers",
+    // Fixed by World Athletics. 26.219 miles.
+    trueValue: 42.195,
+    source: "World Athletics official distance"
+  },
+  {
+    id: "moon-diameter",
+    title: "Moon Diameter",
+    prompt: "What is the diameter of the Moon?",
+    unit: "kilometers",
+    // Confirm against the NASA Moon fact sheet.
+    trueValue: 3474,
+    source: "NASA Moon fact sheet"
   }
 ];

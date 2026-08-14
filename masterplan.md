@@ -39,23 +39,34 @@ This section is the heart of the project. An LLM implementing the app should tre
 
 Each round the user submits a bid `b` and an ask `a`, subject to `a > b > 0`. A quote where `a <= b` is invalid and must be rejected by the UI before it reaches the engine.
 
-### 3.3 Counterparty decision (deterministic, given `V`)
+### 3.3 Counterparty decision with informed and uninformed flow
 
-The app knows `V` and trades against the quote to exploit any mispricing:
+The app knows `V` and models two kinds of counterparty flow.
+
+Informed flow picks off a wrong quote and does not use randomness:
 
 | Condition        | App action              | Effect on user                          |
 |------------------|-------------------------|-----------------------------------------|
 | `a < V`          | App buys `q` at `a`     | User **sells**: `position -= q`, `cash += a * q` |
 | `b > V`          | App sells `q` at `b`    | User **buys**: `position += q`, `cash -= b * q`  |
-| `b <= V <= a`    | No trade                | No change. The user's market straddles fair value. |
 
-That single rule is the whole game. It penalizes the user in proportion to how wrong the quote is, and the side that keeps getting traded tells the user where `V` sits relative to their market:
+Uninformed flow can only arrive when the quote straddles true value, `b <= V <= a`. It is controlled by:
 
-- If the app keeps lifting the user's ask, the ask is below `V`, so the user should raise it.
-- If the app keeps hitting the user's bid, the bid is above `V`, so the user should lower it.
-- A strong user converges toward `V` over the rounds and stops getting picked off. That convergence is the skill the tool teaches.
+- `flowProb`, the probability that uninformed flow arrives on a straddling quote. Default `0.7`.
+- `band = bandFraction * V`, with default `bandFraction = 0.05`.
+- `rng`, an injected function returning a number in `[0, 1)`.
 
-**Design knob (straddle behavior).** Default is "no trade" when the market straddles `V`, which is realistic and gives the user the signal that they are close. An optional variant is to have the app trade the side of the mid it prefers, to keep pressure on. Default to no trade for v1; expose the variant as a config flag.
+The engine does not store `rng` in state. This keeps state pure and serializable while still allowing one seeded generator per game in production.
+
+On a straddling quote, evaluate in this exact order:
+
+1. Draw `arrival = rng()`. If `arrival >= flowProb`, there is no trade.
+2. Draw `side = rng()`. If `side < 0.5`, an uninformed buyer may lift the ask.
+3. The buyer trades only if `a <= V + band`; otherwise there is no trade.
+4. If `side >= 0.5`, an uninformed seller may hit the bid.
+5. The seller trades only if `b >= V - band`; otherwise there is no trade.
+
+This rewards tight markets around `V` because they can earn spread from uninformed flow, while very wide straddling markets are not filled.
 
 ### 3.4 Bookkeeping
 
@@ -100,6 +111,7 @@ type Trade = {
   action: 'sold' | 'bought' | 'none';
   price?: number;       // fill price if a trade happened
   size?: number;        // q if a trade happened
+  counterparty: 'informed' | 'uninformed' | null;
   positionAfter: number;
   cashAfter: number;
 };
@@ -110,6 +122,8 @@ type GameState = {
   round: number;        // current round, 1..maxRounds
   maxRounds: number;    // N, default 7
   tradeSize: number;    // q, default 1
+  flowProb: number;     // probability of uninformed flow on a straddling quote
+  band: number;         // max distance from V where uninformed flow will trade
   position: number;
   cash: number;
   trades: Trade[];
@@ -120,10 +134,25 @@ type GameState = {
 Core engine functions to implement (pure, no UI, unit testable):
 
 ```ts
-evaluateQuote(input: { bid: number; ask: number; trueValue: number; size: number })
-  : { action: 'sold' | 'bought' | 'none'; price?: number; size?: number; message: string };
+makeRng(seed: number): () => number;  // mulberry32, returns numbers in [0, 1)
 
-applyRound(state: GameState, quote: { bid: number; ask: number })
+evaluateQuote(input: {
+  bid: number;
+  ask: number;
+  trueValue: number;
+  size: number;
+  band: number;
+  flowProb: number;
+  rng: () => number;
+}): {
+  action: 'sold' | 'bought' | 'none';
+  price?: number;
+  size?: number;
+  counterparty: 'informed' | 'uninformed' | null;
+  message: string;
+};
+
+applyRound(state: GameState, quote: { bid: number; ask: number }, rng: () => number)
   : GameState;
 
 finalPnL(state: GameState): number;   // cash + position * trueValue
@@ -148,12 +177,12 @@ Store them in a `scenarios.json` file so adding more is a data change, not a cod
 
 ## 6. Tech stack
 
-Keep it light. All the mechanics are deterministic math with no server required, so v1 is pure frontend.
+Keep it light. The mechanics are pure frontend logic with injected randomness and no server required for v1.
 
-- **UI:** React with Vite.
-- **Language:** TypeScript (worth it here for the state and money math).
-- **Styling:** your choice. Tailwind or plain CSS modules both fine.
-- **Data:** scenarios and true values in a local JSON file.
+- **UI:** Vanilla browser UI with native ES modules.
+- **Language:** JavaScript.
+- **Styling:** plain CSS.
+- **Data:** scenarios and true values in a local ES module.
 - **Deployment:** Vercel or Netlify. Both are free and serve from a global CDN, so global accessibility is handled with zero infrastructure.
 - **Local development:** Vite dev server. No Docker.
 
@@ -181,7 +210,7 @@ Goal: an empty app that is live. Scope: Vite + React + TypeScript project, a bas
 Goal: the user can pick a scenario. Scope: `scenarios.json`, a scenario list screen, navigation into a game screen that shows the chosen prompt. Done when: selecting a scenario lands the user on a game screen showing that scenario's question.
 
 **Stage 2 — Game engine (pure logic).**
-Goal: the mechanics work as pure functions. Scope: `evaluateQuote`, `applyRound`, `finalPnL`, plus the `GameState` reducer, with a unit test suite covering the three counterparty branches, position and cash updates, and the worked PnL check from Section 3.4. Done when: all tests pass and no React is involved.
+Goal: the mechanics work as pure functions. Scope: `makeRng`, `evaluateQuote`, `applyRound`, `finalPnL`, plus the `GameState` reducer, with a unit test suite covering informed flow, uninformed flow, position and cash updates, immutability, seeded RNG behavior, and the worked PnL check from Section 3.4. Done when: `node --test` passes and no UI code is involved.
 
 **Stage 3 — Game UI wiring.**
 Goal: a playable round loop. Scope: bid and ask inputs with validation (`a > b > 0`), a submit action that calls the engine, a per round result message, and live display of round number, position, and running cash. Done when: a user can play all `N` rounds and see the counterparty respond each round.
@@ -215,7 +244,7 @@ Optional context primer to prepend to any stage prompt:
 
 ### Stage 2 prompt
 
-> Implement Stage 2: the pure game engine from Section 4, with no React. Write `evaluateQuote`, `applyRound`, and `finalPnL`, plus the `GameState` types. Then write a unit test suite (Vitest) that covers all three counterparty branches from Section 3.3, the position and cash updates, and the worked PnL check from Section 3.4 in both directions. Keep the engine free of any UI dependency. Show me the engine file and the test file, and confirm the tests pass.
+> Implement Stage 2: the pure game engine from Section 4, with no UI dependency. Write `makeRng`, `evaluateQuote`, `applyRound`, and `finalPnL`, plus the `GameState` shape. Then write a unit test suite using `node:test` and `node:assert` that covers informed flow, uninformed flow, position and cash updates, immutability, seeded RNG behavior, and the worked PnL check from Section 3.4 in both directions. Keep the engine free of any DOM dependency. Show me the engine file and the test file, and confirm the tests pass.
 
 ### Stage 3 prompt
 

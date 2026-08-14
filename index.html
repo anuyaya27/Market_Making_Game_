@@ -26,6 +26,69 @@
           <h2 id="game-title"></h2>
           <p id="game-prompt" class="scenario-prompt"></p>
         </div>
+
+        <div class="game-panel">
+          <p id="game-status" class="game-status" aria-live="polite"></p>
+
+          <form id="quote-form" class="quote-form" novalidate>
+            <div class="quote-field">
+              <label for="bid-input">Bid</label>
+              <input id="bid-input" name="bid" type="number" step="any" inputmode="decimal" required>
+            </div>
+            <div class="quote-field">
+              <label for="ask-input">Ask</label>
+              <input id="ask-input" name="ask" type="number" step="any" inputmode="decimal" required>
+            </div>
+            <button id="submit-quote" class="submit-button" type="submit">Submit quote</button>
+          </form>
+
+          <p id="quote-error" class="quote-error" role="alert"></p>
+          <p id="round-result" class="round-result" aria-live="polite"></p>
+          <p id="round-hint" class="round-hint" aria-live="polite"></p>
+        </div>
+
+        <section class="round-log-section" aria-labelledby="round-log-title">
+          <h3 id="round-log-title">Round log</h3>
+          <ol id="round-log" class="round-log"></ol>
+        </section>
+
+        <section id="results-section" class="results-section" aria-labelledby="results-title" hidden>
+          <h3 id="results-title">Results</h3>
+          <p id="true-value-result" class="true-value-result"></p>
+
+          <form id="quiz-form" class="quiz-form" novalidate>
+            <fieldset class="position-quiz">
+              <legend>Your final position</legend>
+              <label>
+                <input type="radio" name="position-answer" value="long">
+                Long
+              </label>
+              <label>
+                <input type="radio" name="position-answer" value="short">
+                Short
+              </label>
+              <label>
+                <input type="radio" name="position-answer" value="flat">
+                Flat
+              </label>
+            </fieldset>
+
+            <div class="pnl-quiz">
+              <label for="pnl-answer">Your final PnL estimate</label>
+              <input id="pnl-answer" name="pnl-answer" type="number" step="any" inputmode="decimal">
+            </div>
+
+            <button id="submit-answers" class="submit-button" type="submit">Submit answers</button>
+          </form>
+
+          <div id="quiz-feedback" class="quiz-feedback" aria-live="polite"></div>
+          <div id="trade-summary" class="trade-summary"></div>
+
+          <div class="results-actions">
+            <button id="play-again" class="submit-button" type="button">Play again</button>
+            <button id="choose-another-scenario" class="secondary-button" type="button">Choose another scenario</button>
+          </div>
+        </section>
       </section>
     </main>
 

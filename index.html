@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Market Making Trainer</title>
+    <title>Make The Market (MTM)</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
@@ -11,13 +11,62 @@
   </head>
   <body>
     <header class="site-header">
-      <h1>Market Making Trainer</h1>
+      <h1>MTM</h1>
     </header>
 
     <main class="site-main">
-      <section id="scenario-list-view" class="view" aria-labelledby="scenario-list-title">
+      <section id="title-view" class="view title-view" aria-labelledby="title-hero">
+        <div class="title-panel">
+          <p class="title-kicker">MTM</p>
+          <h2 id="title-hero" tabindex="-1">MAKE THE MARKET</h2>
+          <p class="title-tagline">Quote a market. Manage the risk.</p>
+          <div class="title-actions">
+            <button id="btn-play" class="submit-button" type="button">Play</button>
+            <button id="btn-instructions" class="secondary-button" type="button">Instructions to play</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="instructions-view" class="view instructions-view" aria-labelledby="instructions-title" hidden>
+        <button id="instructions-back" class="back-button" type="button">Back</button>
+        <div class="instructions-panel">
+          <h2 id="instructions-title" tabindex="-1">How to play</h2>
+          <p>You are the market maker. Your job is to quote a fair two-sided market on a question that has a hidden true value, then manage the position you build up.</p>
+
+          <h3>Each round</h3>
+          <ul>
+            <li>Pick a scenario. It has a true value you cannot see.</li>
+            <li>Quote a bid and an ask, where the ask is higher than the bid. The bid is the price you will buy at. The ask is the price you will sell at.</li>
+            <li>A counterparty trades against your quote:
+              <ul>
+                <li>If your ask is below the true value, an informed buyer lifts your ask. You sell and get shorter. You sold too cheap.</li>
+                <li>If your bid is above the true value, an informed seller hits your bid. You buy and get longer. You paid too much.</li>
+                <li>If your market straddles the true value, uninformed flow may trade near fair value and let you earn the spread, or no one trades.</li>
+              </ul>
+            </li>
+            <li>Use which side keeps trading to sense where the true value sits, and tighten your market over the rounds.</li>
+          </ul>
+
+          <h3>Scoring</h3>
+          <ul>
+            <li>Position is your net of buys and sells. Positive is long, negative is short, zero is flat.</li>
+            <li>Cash is the running cash from your fills.</li>
+            <li>The game runs a fixed number of rounds.</li>
+            <li>After the last round the true value is revealed. Your PnL is cash plus position times the true value.</li>
+            <li>You then answer whether you are long, short, or flat, and what your PnL is. You are graded on the exact values.</li>
+          </ul>
+
+          <h3>Goal</h3>
+          <ul>
+            <li>Quote tight markets centered on your best estimate. Tight markets earn the spread from uninformed flow, but if your quote is on the wrong side of the true value, informed flow will pick you off.</li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="scenario-list-view" class="view" aria-labelledby="scenario-list-title" hidden>
+        <button id="scenario-list-back" class="back-button" type="button">Back</button>
         <div class="view-header">
-          <h2 id="scenario-list-title">Choose a scenario</h2>
+          <h2 id="scenario-list-title" tabindex="-1">Choose a scenario</h2>
         </div>
         <div id="scenario-list" class="scenario-list"></div>
       </section>
@@ -26,7 +75,7 @@
         <button id="back-to-list" class="back-button" type="button">Back</button>
         <div class="scenario-detail">
           <p id="game-unit" class="scenario-unit"></p>
-          <h2 id="game-title"></h2>
+          <h2 id="game-title" tabindex="-1"></h2>
           <p id="game-prompt" class="scenario-prompt"></p>
         </div>
 

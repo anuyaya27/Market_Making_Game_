@@ -4,10 +4,13 @@ import { scenarios } from "./data/scenarios.js";
 import { applyRound, createGameState, finalPnL, makeRng } from "./engine.js";
 import {
   appendRoundLog,
+  bindInstructionsBack,
   bindResultsControls,
   bindQuizForm,
   bindQuoteForm,
   bindBackControl,
+  bindScenarioListBack,
+  bindTitleControls,
   clearQuoteError,
   disableQuoteForm,
   renderGameStatus,
@@ -16,11 +19,13 @@ import {
   renderTradeSummary,
   resetGameView,
   showGameView,
+  showInstructionsView,
   showQuoteError,
   showResultsSection,
   showRoundHint,
   showRoundResult,
-  showScenarioList
+  showScenarioList,
+  showTitleView
 } from "./ui.js";
 
 // This can be loosened later if users enter rounded PnL estimates.
@@ -212,6 +217,20 @@ bindBackControl(() => {
   abandonGame();
 });
 
+bindTitleControls({
+  onPlay: () => {
+    showScenarioList();
+  },
+  onInstructions: () => {
+    showInstructionsView();
+  }
+});
+bindInstructionsBack(() => {
+  showTitleView();
+});
+bindScenarioListBack(() => {
+  showTitleView();
+});
 bindQuoteForm(handleQuoteSubmit);
 bindQuizForm(handleQuizSubmit);
 bindResultsControls({
@@ -224,4 +243,4 @@ bindResultsControls({
     abandonGame();
   }
 });
-showScenarioList();
+showTitleView();

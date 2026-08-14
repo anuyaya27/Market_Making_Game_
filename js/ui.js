@@ -1,8 +1,17 @@
 // DOM rendering and UI event handling for the trainer.
 
+const titleView = document.querySelector("#title-view");
+const instructionsView = document.querySelector("#instructions-view");
 const listView = document.querySelector("#scenario-list-view");
 const gameView = document.querySelector("#game-view");
 const scenarioList = document.querySelector("#scenario-list");
+const playButton = document.querySelector("#btn-play");
+const instructionsButton = document.querySelector("#btn-instructions");
+const instructionsBackButton = document.querySelector("#instructions-back");
+const scenarioListBackButton = document.querySelector("#scenario-list-back");
+const titleHero = document.querySelector("#title-hero");
+const instructionsTitle = document.querySelector("#instructions-title");
+const scenarioListTitle = document.querySelector("#scenario-list-title");
 const gameTitle = document.querySelector("#game-title");
 const gameUnit = document.querySelector("#game-unit");
 const gamePrompt = document.querySelector("#game-prompt");
@@ -85,6 +94,14 @@ function createStatusStat(label, value) {
   return stat;
 }
 
+function showOnlyView(view) {
+  titleView.hidden = true;
+  instructionsView.hidden = true;
+  listView.hidden = true;
+  gameView.hidden = true;
+  view.hidden = false;
+}
+
 export function renderScenarioList(scenarios, onSelectScenario) {
   scenarioList.replaceChildren();
 
@@ -102,8 +119,8 @@ export function renderScenarioList(scenarios, onSelectScenario) {
 }
 
 export function showScenarioList() {
-  listView.hidden = false;
-  gameView.hidden = true;
+  showOnlyView(listView);
+  scenarioListTitle.focus();
 }
 
 export function showGameView(scenario) {
@@ -111,13 +128,35 @@ export function showGameView(scenario) {
   gameUnit.textContent = scenario.unit;
   gamePrompt.textContent = scenario.prompt;
 
-  listView.hidden = true;
-  gameView.hidden = false;
-  bidInput.focus();
+  showOnlyView(gameView);
+  gameTitle.focus();
 }
 
 export function bindBackControl(onBack) {
   backButton.addEventListener("click", onBack);
+}
+
+export function showTitleView() {
+  showOnlyView(titleView);
+  titleHero.focus();
+}
+
+export function showInstructionsView() {
+  showOnlyView(instructionsView);
+  instructionsTitle.focus();
+}
+
+export function bindTitleControls({ onPlay, onInstructions }) {
+  playButton.addEventListener("click", onPlay);
+  instructionsButton.addEventListener("click", onInstructions);
+}
+
+export function bindInstructionsBack(onBack) {
+  instructionsBackButton.addEventListener("click", onBack);
+}
+
+export function bindScenarioListBack(onBack) {
+  scenarioListBackButton.addEventListener("click", onBack);
 }
 
 export function bindQuoteForm(onSubmitQuote) {
